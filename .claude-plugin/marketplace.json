@@ -1,0 +1,14 @@
+{
+  "name": "carousel-builder",
+  "owner": {
+    "name": "Abdullah Formuli",
+    "url": "https://github.com/authrain-cloud-abdullahformuli"
+  },
+  "plugins": [
+    {
+      "name": "carousel-builder",
+      "source": "./",
+      "description": "Instagram carousel builder for Claude Code (Higgsfield + Canva), bundled with /short-form-caption."
+    }
+  ]
+}

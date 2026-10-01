@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carousel Builder for Claude Code — Automated Instagram Carousel Studio</title>
+  <meta name="description" content="Build branded Instagram carousels end-to-end with Claude Code, Higgsfield MCP, and Canva MCP. Real-time character budgets, theme consistency, and short-form captions.">
+  <meta name="author" content="Abdullah Formuli">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: rgba(18, 20, 30, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #F26B3A;
+      --primary-glow: rgba(242, 107, 58, 0.25);
+      --accent: #FF8F6B;
+      --text: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --error: #EF4444;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(242, 107, 58, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 75%, rgba(120, 60, 240, 0.1) 0%, transparent 45%);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 3rem 1.5rem 2rem;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(242, 107, 58, 0.15);
+      border: 1px solid rgba(242, 107, 58, 0.3);
+      color: var(--accent);
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #FFFFFF 30%, #F26B3A 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 2rem;
+    }
+
+    .cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1.4rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #F26B3A 0%, #D94813 100%);
+      color: white;
+      box-shadow: 0 4px 20px var(--primary-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(242, 107, 58, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(10px);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+      h1 { font-size: 2.2rem; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Carousel Preview Section */
+    .deck-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .slide-viewer {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      aspect-ratio: 4 / 5;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      background: #000;
+    }
+
+    .slide-viewer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.3s ease;
+    }
+
+    .deck-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .deck-dots {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .deck-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .deck-dot.active {
+      background: var(--primary);
+      width: 24px;
+      border-radius: 999px;
+    }
+
+    .nav-arrow {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.2s ease;
+    }
+    .nav-arrow:hover {
+      background: var(--primary);
+    }
+
+    /* Interactive Character Budget Tool */
+    .budget-field {
+      margin-bottom: 1.5rem;
+    }
+
+    .field-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .field-rule {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      padding: 0.75rem 1rem;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-glow);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .budget-bar-container {
+      height: 6px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .budget-bar {
+      height: 100%;
+      width: 0%;
+      transition: width 0.2s ease, background 0.2s ease;
+      border-radius: 999px;
+    }
+
+    .pill-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .pill-ok {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .pill-warn {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .pill-error {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--error);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Workflow Pipeline Steps */
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .step-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .step-num {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: rgba(242, 107, 58, 0.3);
+    }
+
+    .step-icon {
+      font-size: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .step-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .step-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* Terminal snippet */
+    .code-block {
+      background: #030408;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: #A7F3D0;
+      position: relative;
+      margin-top: 1rem;
+      overflow-x: auto;
+    }
+
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge">🎠 Day 19 Daily Ship</div>
+    <h1>Carousel Builder for Claude Code</h1>
+    <p class="subtitle">
+      Generate branded Instagram carousels end-to-end from your terminal: theme-locked Higgsfield AI image generation, strict character budgets, and pixel-perfect Canva deck assembly.
+    </p>
+    <div class="cta-group">
+      <a href="https://github.com/authrain-cloud-abdullahformuli/carousel-builder" class="btn btn-primary" target="_blank" rel="noopener">
+        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub Repository
+      </a>
+      <a href="#demo" class="btn btn-secondary">Interactive Studio</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid-2" id="demo">
+      <!-- Deck Gallery Preview -->
+      <div class="card">
+        <h2 class="card-title">
+          <span>📐</span> Reference Deck Anatomy (8-Slide Format)
+        </h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+          Each carousel follows an exact template structure with 4:5 cover, two-tone pillar headlines, 16:9 glow images, and a lead-magnet CTA gift slide.
+        </p>
+        <div class="deck-container">
+          <div class="slide-viewer">
+            <img id="currentSlideImg" src="examples/template-reference/1.png" alt="Slide 1 Preview">
+          </div>
+          <div class="deck-controls">
+            <button class="nav-arrow" id="prevSlide" aria-label="Previous Slide">‹</button>
+            <div class="deck-dots" id="deckDots"></div>
+            <button class="nav-arrow" id="nextSlide" aria-label="Next Slide">›</button>
+          </div>
+          <div id="slideRoleDesc" style="font-size: 0.85rem; color: var(--accent); font-weight: 600;">
+            Slide 1: Cover (4:5 Theme Anchor)
+          </div>
+        </div>
+      </div>
+
+      <!-- Character Budget Live Validator -->
+      <div class="card">
+        <h2 class="card-title">
+          <span>⚖️</span> Live Character Budget Validator
+        </h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+          Why character budgets? Canva text boxes are fixed. If copy overflows, text reflows and ruins deck unity. Enforce budgets before generating images!
+        </p>
+
+        <!-- Pillar Headline -->
+        <div class="budget-field">
+          <div class="field-header">
+            <span>Pillar Headline Budget (45–58 Chars)</span>
+            <span id="headlinePill" class="pill-status pill-ok">49 chars · PERFECT</span>
+          </div>
+          <div class="field-rule">Format: The [Role]: [orange tool] [verb phrase].</div>
+          <input type="text" id="headlineInput" value="The Architect: Cursor automates repetitive tasks.">
+          <div class="budget-bar-container">
+            <div id="headlineBar" class="budget-bar" style="width: 84%; background: var(--success);"></div>
+          </div>
+        </div>
+
+        <!-- Pillar Body -->
+        <div class="budget-field">
+          <div class="field-header">
+            <span>Pillar Body Budget (65–80 Chars)</span>
+            <span id="bodyPill" class="pill-status pill-ok">77 chars · PERFECT</span>
+          </div>
+          <div class="field-rule">Format: Crisp dark body line ending in ONE ALL-CAPS word.</div>
+          <input type="text" id="bodyInput" value="Generate robust infrastructure scaffolding in seconds with zero manual GRIND.">
+          <div class="budget-bar-container">
+            <div id="bodyBar" class="budget-bar" style="width: 96%; background: var(--success);"></div>
+          </div>
+        </div>
+
+        <!-- Instagram Caption -->
+        <div class="budget-field">
+          <div class="field-header">
+            <span>Caption Hard Cap (&le; 500 Chars)</span>
+            <span id="captionPill" class="pill-status pill-ok">286 / 500 chars</span>
+          </div>
+          <div class="field-rule">Includes CTA on line 1, punchy body, and exactly 5 hashtags.</div>
+          <textarea id="captionInput">Comment "BUILD" for the full Claude Code carousel toolkit.
+
+Most creators spend hours fighting Canva layout shifts.
+Zero structure. Endless reformatting.
+
+The unlock is simple:
+Lock your character budgets before touching Canva.
+
+#aiagents
+#claudecode
+#socialmediatips
+#canva
+#solopreneur</textarea>
+          <div class="budget-bar-container">
+            <div id="captionBar" class="budget-bar" style="width: 57%; background: var(--success);"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Pipeline Architecture -->
+    <div class="card" style="margin-bottom: 3rem;">
+      <h2 class="card-title"><span>⚡</span> The Autonomous Carousel Engine</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Driven by two MCP servers in Claude Code, running an interview-first, approval-gated pipeline.
+      </p>
+
+      <div class="pipeline-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-icon">🎯</div>
+          <div class="step-title">Interview Pillar Extraction</div>
+          <div class="step-desc">Breaks your raw idea into 4–6 cohesive pillars, an explicit deliverable, and a lead-magnet CTA keyword.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-icon">🎨</div>
+          <div class="step-title">Higgsfield Theme Anchor</div>
+          <div class="step-desc">Generates 4:5 cover options via Nano Banana Pro. The selected cover locks lighting and palette for middle slides.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-icon">📏</div>
+          <div class="step-title">Budget Validation</div>
+          <div class="step-desc">Every headline and body line is checked against exact character limits before any image generation credits are spent.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">04</div>
+          <div class="step-icon">🖼️</div>
+          <div class="step-title">Canva MCP Assembly</div>
+          <div class="step-desc">Duplicates the 8-page deck, swaps text spans in-place, and updates image fills with glowing frame effects preserved.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Install Snippet -->
+    <div class="card">
+      <h2 class="card-title"><span>🚀</span> Quick Install</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Install as a Claude Code plugin or load directly into Cursor / Open Agent CLIs:
+      </p>
+
+      <div class="code-block">
+        # In Claude Code:<br>
+        /plugin marketplace add authrain-cloud-abdullahformuli/carousel-builder<br>
+        /plugin install carousel-builder@carousel-builder<br><br>
+        # Run command:<br>
+        /carousel "Claude Code + Apify for unlimited leads"
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      Maintained by <a href="https://github.com/authrain-cloud-abdullahformuli" target="_blank" rel="noopener">Abdullah Formuli</a> · Open-source under MIT License.
+    </p>
+  </footer>
+
+  <script>
+    // Slide Carousel Viewer Logic
+    const slideRoles = [
+      "Slide 1: Cover (4:5 Theme Anchor)",
+      "Slide 2: Pillar 1 (Headline + 16:9 Image + Body)",
+      "Slide 3: Pillar 2 (Headline + 16:9 Image + Body)",
+      "Slide 4: Pillar 3 (Headline + 16:9 Image + Body)",
+      "Slide 5: Pillar 4 (Headline + 16:9 Image + Body)",
+      "Slide 6: Pillar 5 (Headline + 16:9 Image + Body)",
+      "Slide 7: Gift / CTA (Keyword Deliverable)",
+      "Slide 8: Closer (Save / Share / Follow Handle)"
+    ];
+
+    let currentSlide = 1;
+    const totalSlides = 8;
+    const imgEl = document.getElementById('currentSlideImg');
+    const roleEl = document.getElementById('slideRoleDesc');
+    const dotsContainer = document.getElementById('deckDots');
+
+    for (let i = 1; i <= totalSlides; i++) {
+      const dot = document.createElement('div');
+      dot.className = `deck-dot ${i === 1 ? 'active' : ''}`;
+      dot.addEventListener('click', () => setSlide(i));
+      dotsContainer.appendChild(dot);
+    }
+
+    function setSlide(num) {
+      currentSlide = num;
+      imgEl.src = `examples/template-reference/${currentSlide}.png`;
+      roleEl.textContent = slideRoles[currentSlide - 1];
+      Array.from(dotsContainer.children).forEach((dot, idx) => {
+        dot.className = `deck-dot ${idx + 1 === currentSlide ? 'active' : ''}`;
+      });
+    }
+
+    document.getElementById('prevSlide').addEventListener('click', () => {
+      setSlide(currentSlide === 1 ? totalSlides : currentSlide - 1);
+    });
+
+    document.getElementById('nextSlide').addEventListener('click', () => {
+      setSlide(currentSlide === totalSlides ? 1 : currentSlide + 1);
+    });
+
+    // Budget Validators
+    const headlineInput = document.getElementById('headlineInput');
+    const headlinePill = document.getElementById('headlinePill');
+    const headlineBar = document.getElementById('headlineBar');
+
+    function checkHeadline() {
+      const len = headlineInput.value.length;
+      const pct = Math.min(100, Math.round((len / 58) * 100));
+      headlineBar.style.width = pct + '%';
+
+      if (len >= 45 && len <= 58) {
+        headlinePill.className = 'pill-status pill-ok';
+        headlinePill.textContent = `${len} chars · PERFECT (45-58)`;
+        headlineBar.style.background = 'var(--success)';
+      } else if (len < 45) {
+        headlinePill.className = 'pill-status pill-warn';
+        headlinePill.textContent = `${len} chars · TOO SHORT (need 45+)`;
+        headlineBar.style.background = 'var(--warning)';
+      } else {
+        headlinePill.className = 'pill-status pill-error';
+        headlinePill.textContent = `${len} chars · OVERFLOW (max 58)`;
+        headlineBar.style.background = 'var(--error)';
+      }
+    }
+    headlineInput.addEventListener('input', checkHeadline);
+
+    const bodyInput = document.getElementById('bodyInput');
+    const bodyPill = document.getElementById('bodyPill');
+    const bodyBar = document.getElementById('bodyBar');
+
+    function checkBody() {
+      const val = bodyInput.value.trim();
+      const len = val.length;
+      const pct = Math.min(100, Math.round((len / 80) * 100));
+      bodyBar.style.width = pct + '%';
+
+      const words = val.split(/\s+/);
+      const lastWord = words[words.length - 1] || '';
+      const isCaps = lastWord.length > 1 && lastWord === lastWord.toUpperCase() && /^[A-Z]+[.!?,]?$/.test(lastWord);
+
+      if (len >= 65 && len <= 80 && isCaps) {
+        bodyPill.className = 'pill-status pill-ok';
+        bodyPill.textContent = `${len} chars · PERFECT + CAPS WORD`;
+        bodyBar.style.background = 'var(--success)';
+      } else if (len >= 65 && len <= 80 && !isCaps) {
+        bodyPill.className = 'pill-status pill-warn';
+        bodyPill.textContent = `${len} chars · Missing END CAPS WORD`;
+        bodyBar.style.background = 'var(--warning)';
+      } else if (len < 65) {
+        bodyPill.className = 'pill-status pill-warn';
+        bodyPill.textContent = `${len} chars · TOO SHORT (need 65+)`;
+        bodyBar.style.background = 'var(--warning)';
+      } else {
+        bodyPill.className = 'pill-status pill-error';
+        bodyPill.textContent = `${len} chars · OVERFLOW (max 80)`;
+        bodyBar.style.background = 'var(--error)';
+      }
+    }
+    bodyInput.addEventListener('input', checkBody);
+
+    const captionInput = document.getElementById('captionInput');
+    const captionPill = document.getElementById('captionPill');
+    const captionBar = document.getElementById('captionBar');
+
+    function checkCaption() {
+      const len = captionInput.value.length;
+      const pct = Math.min(100, Math.round((len / 500) * 100));
+      captionBar.style.width = pct + '%';
+
+      if (len <= 500) {
+        captionPill.className = 'pill-status pill-ok';
+        captionPill.textContent = `${len} / 500 chars · OK`;
+        captionBar.style.background = 'var(--success)';
+      } else {
+        captionPill.className = 'pill-status pill-error';
+        captionPill.textContent = `${len} / 500 chars · EXCEEDED BY ${len - 500}`;
+        captionBar.style.background = 'var(--error)';
+      }
+    }
+    captionInput.addEventListener('input', checkCaption);
+  </script>
+</body>
+</html>
